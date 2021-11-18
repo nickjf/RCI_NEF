@@ -1,0 +1,1 @@
+Compute protein flexibility from chemical shifts in NEF format.

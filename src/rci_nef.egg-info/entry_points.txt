@@ -1,0 +1,3 @@
+[console_scripts]
+rci-nef = rci_nef.rci_nef:main
+

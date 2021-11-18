@@ -1,0 +1,13 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/rci_nef/__init__.py
+src/rci_nef/rci_nef.py
+src/rci_nef/rci_nef_dicts.py
+src/rci_nef.egg-info/PKG-INFO
+src/rci_nef.egg-info/SOURCES.txt
+src/rci_nef.egg-info/dependency_links.txt
+src/rci_nef.egg-info/entry_points.txt
+src/rci_nef.egg-info/requires.txt
+src/rci_nef.egg-info/top_level.txt
