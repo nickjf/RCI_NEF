@@ -79,10 +79,10 @@ def calc_RCI(path_to_nef_file):
                                 r = res(res_i,res_name)
                                 c.residues.append(r)
 
-                        for r in c.residues:
-                            if r.i == res_i and r.name == res_name:
-                                append_shift(r,atom_type,shift_value)
-                                break
+                            for r in c.residues:
+                                if r.i == res_i and r.name == res_name:
+                                    append_shift(r,atom_type,shift_value)
+                                    break
 
             for c in s.chains:                                               # iterate over different chains
                 for r in c.residues:                                                # append neighbours
