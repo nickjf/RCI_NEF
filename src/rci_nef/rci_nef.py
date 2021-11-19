@@ -62,7 +62,7 @@ def calc_RCI(path_to_nef_file):
             s = cs_set(chemical_shift_set[0]+1)
             for line in chemical_shift_set[1]:
                 chain_name = line[0]
-                res_i = int(line[1])
+                res_i = int(''.join(c for c in line[1] if c.isdigit()))                       # ignore non-numeric characters
                 res_name = line[2]
                 atom_type = line[3]
                 shift_value = float(line[4])
