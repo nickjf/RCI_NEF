@@ -4,6 +4,7 @@ import pynmrstar
 from rci_nef import rci_nef_dicts
 import numpy as np
 import sys
+import os
 
 class cs_set(object):
     _registry = []
@@ -49,19 +50,47 @@ def append_shift(res, atom_type, shift):
 
 def calc_RCI(path_to_nef_file):
 
-    entry = pynmrstar.Entry.from_file(path_to_nef_file)  # read NEF format
-    
+    entry = pynmrstar.Entry.from_file(path_to_nef_file)  # read NEF or NMRStarv3 format
+
+    shift_format = ''
+
     cs_result_sets=[]
     for chemical_shift_loop in entry.get_loops_by_category("_nef_chemical_shift"): # get sets of chemical shift files
-        cs_result_sets.append(chemical_shift_loop.get_tag(['chain_code', 'sequence_code', 'residue_name', 'atom_name', 'value', 'value_uncertainty']))
-        
+        cs_result_sets.append(chemical_shift_loop.get_tag(['chain_code', 'sequence_code', 'residue_name', 'atom_name', 'value']))
+        shift_format = 'nef'
+
     if len(cs_result_sets) == 0:
-        print('no chemical shifts found')
+        try:
+            cs_result_sets=[]
+            for chemical_shift_loop in entry.get_loops_by_category("_Atom_chem_shift"):
+                cs_result_sets.append(chemical_shift_loop.get_tag(['Entity_ID','seq_ID', 'Comp_ID', 'Atom_ID', 'Val','Auth_asym_ID']))
+                shift_format = 'nmrstarv3'
+        except:
+            try:
+                cs_result_sets=[]
+                for chemical_shift_loop in entry.get_loops_by_category("_Atom_chem_shift"):
+                    cs_result_sets.append(chemical_shift_loop.get_tag(['Entity_ID','seq_ID', 'Comp_ID', 'Atom_ID', 'Val']))
+                    shift_format = 'nmrstarv3'
+            except:
+                pass
+    
+    if len(cs_result_sets) == 0:
+        print(' -> no chemical shifts found')
     else:
+        print(" -> shifts are in "+shift_format+" format")
+        
         for chemical_shift_set in enumerate(cs_result_sets):                                  # iterate over sets of shifts
             s = cs_set(chemical_shift_set[0]+1)
             for line in chemical_shift_set[1]:
-                chain_name = line[0]
+
+                if shift_format == 'nef' or shift_format == 'nmrstarv3':
+                    chain_name = line[0]
+                elif shift_format == 'nmrstarv3_authchain':
+                    if line[5].isalpha():
+                        chain_name = line[5]
+                    else:
+                        chain_name = line[0]
+                                
                 res_i = int(''.join(c for c in line[1] if c.isdigit()))                       # ignore non-numeric characters
                 res_name = line[2]
                 atom_type = line[3]
@@ -170,7 +199,7 @@ def calc_RCI(path_to_nef_file):
 
         for s in cs_set._registry:
             for c in s.chains:
-                out = open("RCI"+"_"+c.i+"_"+str(s.i)+".rci",'w')
+                out = open(os.path.splitext(path_to_nef_file)[0]+"_"+c.i+"_"+str(s.i)+".rci",'w')   # splittext!
                 rci = []
                 x = []
                 for r in c.residues:

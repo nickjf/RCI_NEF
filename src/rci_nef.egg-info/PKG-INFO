@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: rci-nef
-Version: 0.0.28
+Version: 0.0.30
 Summary: Compute protein flexibility from chemical shifts in NEF format.
 Home-page: https://github.com/pypa/sampleproject
 Author: Nick J Fowler
